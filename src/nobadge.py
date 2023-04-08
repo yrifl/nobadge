@@ -1,56 +1,96 @@
-import requests, json
+# Skids are cringes.
+# Author: @yrifl (xYuri#7125)
+
 from time import sleep
 from os import system
+import requests, json
 
-uid = int(input("User ID > "))
-rbxcookie = str(input("RobloxSecurity Cookie (.ROBLOSECURITY) > "))
-system('cls')
-print("Initiation.. Deletion")
+class NoBadge:
+	def __self__(self, uid, cookie):
+		print('Fetching badges...')
 
-rif = requests.get(f'https://badges.roblox.com/v1/users/{uid}/badges?limit=100&sortOrder=Asc')
+		self.badges = requests.get(f'https://badges.roblox.com/v1/users/{uid}/badges?limit=100&sortOrder=Asc')
+		self.result = json.loads(
+			self.badges.text
+		)
 
-rs = json.loads(rif.text)
+		# ...
+		print('Setting up the environment..')
 
-ids = []
-vedex = []
-gameNR = []
-gameN = []
-cookiesx = {'.ROBLOSECURITY': rbxcookie}
-XCSRFTOKEN = requests.post("https://auth.roblox.com/v2/logout", cookies=cookiesx).headers['X-CSRF-TOKEN']
-chead = {
-    'Content-Type': 'application/json',
-    'X-CSRF-TOKEN': XCSRFTOKEN
-}
+		self.Id = []
+		self.BadgeName = []
+		self.PlaceID = []
+		self.GameName = []
 
-succ = 0
-for x in range(len(rs["data"])):
-    ids.append(rs["data"][x]["id"])
-    vedex.append(rs["data"][x]["name"])
-for s in range(len(rs["data"])):
-    gameNR.append(rs["data"][s]["awarder"]["id"])
+		self.Cookies = {
+			'.ROBLOSECURITY': cookie
+		}
 
-for f in range(len(gameNR)):
-    N = requests.get(f"https://games.roblox.com/v1/games/multiget-place-details?placeIds={gameNR[f]}", cookies=cookiesx)
-    N = json.loads(N.text)
-    gameN.append(N[0]["name"])
+		print('Creating headers..')
+		self.xcsrftoken = requests.post(
+			"https://auth.roblox.com/v2/logout", cookies=self.Cookies
+		).headers['X-CSRF-TOKEN']
 
-def delbd(badgeID):
-    global succ
-    r = requests.delete(f"https://badges.roblox.com/v1/user/badges/{badgeID}", cookies=cookiesx, headers=chead)
-    print(r.text)
-    if r.status_code == 200:
-        succ += 1
+		self.Headers = {
+			'Content-Type': 'application/json',
+			'X-CSRF-TOKEN': self.xcsrftoken
+		}
 
-for x in range(len(ids)):
-    print(f"[-] Deleting a badge named {vedex[x]} from '{gameN[x]}' game with badge id {ids[x]}")
-    delbd(ids[x])
+		self.Success = 0
 
-if len(ids) != succ:
-    if succ == 0:
-        print("[!] Cannot remove any badges :'(. This is a bug maybe...")
-    else:
-        print(f"[!] Successfuly removed {succ} badges, failed to remove {len(ids)-succ} badges. Sorry!")
-else:
-    print(f"[+] Successfuly removed {succ} badges, that means all badges removed :D")
+	def Exec(self):
+		for Id in range(len(self.result["data"])):
+			self.Id.append(
+				self.result["data"][Id]["id"]
+			)
 
-print("Thank you for using this software! Created by Cyber2f08. :D")
+			self.BadgeName(
+				self.result["data"][Id]["name"]
+			)
+
+		for PlaceID in range(len(self.result["data"])):
+			self.PlaceID.append(
+				self.result["data"][PlaceID]["awarder"]["id"]
+			)
+
+		for GameName in range(len(self.PlaceID)):
+			_ = requests.get(f'https://games.roblox.com/v1/games/multiget-place-details?placeIds={self.PlaceID[GameName]}', cookies = self.Cookies)
+			_ = json.loads(
+				_.text
+			)
+
+		for _ in range(len(self.Id)):
+			print(f'Trying to delete badge named {self.BadgeName[_]} from {self.GameName[_]} game with badge id {self.Id[_]}')
+			r = requests.delete(
+				f"https://badges.roblox.com/v1/user/badges/{self.Id[_]}",
+				cookies = self.Cookies,
+				headers = self.Headers
+			)
+
+			if r.status_code == 200:
+				self.Success += 1
+
+		if len(self.Id) != self.Success:
+			if self.Success == 0:
+				print('Cannot remove any badges.. check your userid, or cookies.')
+				print('Made issue on github, if no works.')
+			else:
+				print(f"Successfully removed {self.Success} badges, failed to remove {len(self.Id)-self.Success} badges.")
+				print("Try to re-run the program.")
+
+		else:
+			print(f"All badges removed, badges removed: {self.Success}")
+
+		print("Thanks for using me! Author: xYuri#7125")
+
+if __name__ == "__main__":
+	uid = int(
+		input("(User ID) > ")
+	)
+
+	rbxcookie = str(
+		input("(.ROBLOSECURITY) > ")
+	)
+
+	NoBadge = NoBadge(uid, rbxcookie)
+	NoBadge.Exec()

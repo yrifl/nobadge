@@ -2,7 +2,22 @@
 
 Warning: Read the readme!
 
-This simple Python program removes all of your Roblox Badges! Becareful. The requirements are `requests`
+> What's this?
+
+This simple Python program removes all of your Roblox Badges! Becareful.
+
+> Why did I make this?
+
+Badges are cringe for me.
+
+> Requirements?
+
+The requirements are Python itself, and package `requests`.
 
 To install `requests` type in `pip install requests` or `pip3 install requests` in your cmd or terminal. And run it with double-clicking the file <src/nobadge.py> or run from the command-line `python src/nobadge.py` or `python3 src/nobadge.py`
 
+> Others?
+
+It's completely opensource but don't steal skids!
+
+Author: xYuri#7125
